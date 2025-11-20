@@ -1,0 +1,57 @@
+:root {
+  --blue: #2196F3; /* xanh da trời chủ đạo */
+  --blue-dark: #1976D2;
+  --bg: #f7f9fc;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --white: #ffffff;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, Roboto, "Segoe UI", sans-serif; color: var(--text); background: var(--bg); }
+.container { max-width: 1140px; margin: 0 auto; padding: 16px; }
+
+/* Header */
+.header {
+  position: sticky; top: 0; z-index: 1000; background: var(--white);
+  border-bottom: 1px solid #e5e7eb;
+}
+.header-inner {
+  display:flex; align-items:center; gap:16px; padding:12px 16px;
+}
+.logo { font-weight: 700; color: var(--blue); text-decoration: none; }
+.search { flex:1; }
+.search input {
+  width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:8px;
+}
+.nav { display:flex; gap:12px; align-items:center; }
+.nav a { text-decoration:none; color: var(--text); padding:8px 10px; border-radius:6px; }
+.nav a:hover { background:#eef6ff; }
+
+/* Buttons */
+.btn {
+  background: var(--blue); color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer;
+}
+.btn:hover { background: var(--blue-dark); }
+
+/* Cards */
+.card {
+  background:#fff; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* Notification dropdown */
+.dropdown {
+  position: relative;
+}
+.dropdown-menu {
+  position: absolute; right:0; top:36px; width:320px; max-height:420px; overflow:auto;
+  background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.12);
+}
+.dropdown-item {
+  padding:12px; border-bottom:1px solid #f1f5f9;
+}
+.dropdown-item:last-child { border-bottom: none; }
+.item-title { font-weight:600; }
+.item-time { font-size:12px; color: var(--muted); }
+.badge { background: var(--blue); color:#fff; border-radius:999px; padding:2px 8px; font-size:12px; }

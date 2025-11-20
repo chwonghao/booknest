@@ -1,0 +1,17 @@
+import axios from "axios";
+
+const client = axios.create({
+  baseURL: "http://localhost:8080/api", // API Gateway
+  timeout: 10000,
+});
+
+// client.interceptors.request.use((config) => {
+//   const auth = localStorage.getItem("auth");
+//   if (auth) {
+//     const { token } = JSON.parse(auth);
+//     if (token) config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
+
+export default client;
