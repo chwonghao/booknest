@@ -1,6 +1,7 @@
 package com.booknest.orderservice.controller;
 
 import com.booknest.orderservice.model.Order;
+import com.booknest.orderservice.model.OrderItem;
 import com.booknest.orderservice.model.OrderStatus;
 import com.booknest.orderservice.service.OrderService;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -73,7 +75,7 @@ public class OrderController {
     private void applyPatch(Order order, String key, Object value) {
         switch (key) {
             case "userId" -> order.setUserId(castLong(value));
-            case "productIds" -> order.setProductIds(castListLong(value));
+            case "orderItems" -> order.setOrderItems(castListOrderItem(value));
             case "totalAmount" -> order.setTotalAmount(castBigDecimal(value));
             case "status" -> order.setStatus(OrderStatus.valueOf(value.toString()));
         }
@@ -91,13 +93,26 @@ public class OrderController {
         return new BigDecimal(v.toString());
     }
 
-    private List<Long> castListLong(Object v) {
+    private Integer castInteger(Object v) {
+        if (v == null) return null;
+        if (v instanceof Number n) return n.intValue();
+        return Integer.valueOf(v.toString());
+    }
+
+    private List<OrderItem> castListOrderItem(Object v) {
         if (v == null) return null;
         if (v instanceof List<?> list) {
             return list.stream()
-                    .map(this::castLong)
+                    .filter(item -> item instanceof Map)
+                    .map(item -> {
+                        Map<?, ?> map = (Map<?, ?>) item;
+                        OrderItem orderItem = new OrderItem();
+                        orderItem.setProductId(castLong(map.get("productId")));
+                        orderItem.setQuantity(castInteger(map.get("quantity")));
+                        return orderItem;
+                    })
                     .collect(Collectors.toList());
         }
-        throw new IllegalArgumentException("Invalid productIds format");
+        throw new IllegalArgumentException("Invalid orderItems format. Expected a list of items.");
     }
 }

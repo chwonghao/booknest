@@ -7,6 +7,7 @@ import com.booknest.orderservice.client.PaymentClient;
 import com.booknest.orderservice.client.ProductClient;
 import com.booknest.orderservice.client.UserClient;
 import com.booknest.orderservice.messaging.OrderProducer;
+import com.booknest.orderservice.model.OrderItem;
 import com.booknest.orderservice.model.Order;
 import com.booknest.orderservice.model.OrderStatus;
 import com.booknest.orderservice.repository.OrderRepository;
@@ -53,15 +54,16 @@ public class OrderService {
 
         // 2. Tính tổng tiền từ danh sách sản phẩm
         BigDecimal total = BigDecimal.ZERO;
-        for (Long productId : order.getProductIds()) {
-            ProductDto product = productClient.getProductById(productId);
+        for (OrderItem item : order.getOrderItems()) {
+            ProductDto product = productClient.getProductById(item.getProductId());
             if (product == null || product.getPrice() == null) {
-                throw new IllegalArgumentException("Invalid product: " + productId);
+                throw new IllegalArgumentException("Invalid product: " + item.getProductId());
             }
-            if (product.getStockQuantity() <= 0) {
-                throw new IllegalArgumentException("Product out of stock: " + productId);
+            if (product.getStockQuantity() < item.getQuantity()) {
+                throw new IllegalArgumentException("Product out of stock: " + item.getProductId());
             }
-            total = total.add(product.getPrice());
+            BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+            total = total.add(itemTotal);
         }
         order.setTotalAmount(total);
 
@@ -90,7 +92,7 @@ public class OrderService {
     public Optional<Order> updateOrder(Long id, Order details) {
         return repository.findById(id).map(existing -> {
             existing.setUserId(details.getUserId());
-            existing.setProductIds(details.getProductIds());
+            existing.setOrderItems(details.getOrderItems());
             existing.setTotalAmount(details.getTotalAmount());
             existing.setStatus(details.getStatus());
             existing.setUpdatedAt(LocalDateTime.now());

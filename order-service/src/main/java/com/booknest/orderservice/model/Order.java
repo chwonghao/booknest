@@ -19,8 +19,7 @@ public class Order {
 
     @ElementCollection
     @CollectionTable(name = "order_products", joinColumns = @JoinColumn(name = "order_id"))
-    @Column(name = "product_id")
-    private List<Long> productIds;
+    private List<OrderItem> orderItems;
 
     private BigDecimal totalAmount;
 
@@ -36,8 +35,8 @@ public class Order {
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
 
-    public List<Long> getProductIds() { return productIds; }
-    public void setProductIds(List<Long> productIds) { this.productIds = productIds; }
+    public List<OrderItem> getOrderItems() { return orderItems; }
+    public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
 
     public BigDecimal getTotalAmount() { return totalAmount; }
     public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
