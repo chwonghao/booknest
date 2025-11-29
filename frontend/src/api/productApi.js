@@ -1,11 +1,24 @@
+import axios from "axios";
 import client from "./client";
 
-export const fetchProducts = async (params = {}) => {
-  const res = await client.get("/products", { params });
-  return res.data;
-};
+export async function fetchProducts({ type, categoryId }) {
+  let url = "http://localhost:8080/api/products";
+  const params = {};
+
+  if (type === "featured") {
+    params.type = "featured";
+  } else if (type === "category" && categoryId) {
+    // Endpoint này nên được xử lý bởi categoryApi, nhưng vẫn có thể giữ ở đây
+    url = `http://localhost:8080/api/categories/${categoryId}/products`;
+  }
+
+  // Sử dụng axios client, nó sẽ tự động xử lý baseURL và lỗi
+  const response = await axios.get(url, { params });
+  return response.data;
+}
 
 export const fetchProduct = async (id) => {
-  const res = await client.get(`/products/${id}`);
-  return res.data;
+  // Sử dụng axios client
+  const response = await axios.get(`http://localhost:8080/api/products/${id}`);
+  return response.data;
 };

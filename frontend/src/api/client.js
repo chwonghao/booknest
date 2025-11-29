@@ -5,13 +5,17 @@ const client = axios.create({
   timeout: 10000,
 });
 
-// client.interceptors.request.use((config) => {
-//   const auth = localStorage.getItem("auth");
-//   if (auth) {
-//     const { token } = JSON.parse(auth);
-//     if (token) config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+client.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export default client;
