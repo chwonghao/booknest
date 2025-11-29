@@ -12,16 +12,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
     private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
     private final NotificationClient notificationClient;
 
-    public UserService(UserRepository repository, NotificationClient notificationClient) {
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder, NotificationClient notificationClient) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
         this.notificationClient = notificationClient;
     }
 
@@ -41,11 +44,12 @@ public class UserService {
         if (repository.findByEmail(user.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         User saved = repository.save(user);
 
-        // 🔔 Gửi thông báo sang NotificationService
         NotificationDto notification = new NotificationDto();
         notification.setUserId(saved.getId());
         notification.setMessage("Welcome " + saved.getFullName() + "!");
@@ -98,4 +102,3 @@ public class UserService {
         return false;
     }
 }
-
