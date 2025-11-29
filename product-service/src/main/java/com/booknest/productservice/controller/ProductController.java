@@ -94,6 +94,7 @@ public class ProductController {
             case "countsOfReview" -> dto.setCountsOfReview(castInt(value));
             case "countOfTextReviews" -> dto.setCountOfTextReviews(castInt(value));
             case "description" -> dto.setDescription((String) value);
+            case "imageUrl" -> dto.setImageUrl((String) value);
             case "price" -> {
                 if (value instanceof Number num) {
                     dto.setPrice(BigDecimal.valueOf(num.doubleValue()));
@@ -102,6 +103,7 @@ public class ProductController {
                 }
             }
             case "stockQuantity" -> dto.setStockQuantity(castLong(value));
+            case "categoryId" -> dto.setCategoryId(castLong(value));
         }
     }
 

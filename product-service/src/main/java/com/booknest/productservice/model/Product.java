@@ -23,6 +23,9 @@ public class Product {
     private String publisher;
     private String language;
     private String isbn;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     private Integer pagesNumber;
 
@@ -37,6 +40,7 @@ public class Product {
 
     @Column(length = 2000)
     private String description;
+    private String imageUrl;
 
     private Long stockQuantity;
     private BigDecimal price;
@@ -58,6 +62,8 @@ public class Product {
     public void setLanguage(String language) { this.language = language; }
     public String getIsbn() { return isbn; }
     public void setIsbn(String isbn) { this.isbn = isbn; }
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
     public Integer getPagesNumber() { return pagesNumber; }
     public void setPagesNumber(Integer pagesNumber) { this.pagesNumber = pagesNumber; }
     public PublishInfo getPublishInfo() { return publishInfo; }
@@ -68,6 +74,8 @@ public class Product {
     public void setReviewInfo(ReviewInfo reviewInfo) { this.reviewInfo = reviewInfo; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public Long getStockQuantity() { return stockQuantity; }
     public void setStockQuantity(Long stockQuantity) { this.stockQuantity = stockQuantity; }
     public BigDecimal getPrice() { return price; }

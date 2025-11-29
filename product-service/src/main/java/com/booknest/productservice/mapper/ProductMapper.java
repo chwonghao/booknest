@@ -2,6 +2,7 @@ package com.booknest.productservice.mapper;
 
 import com.booknest.commonlib.dto.ProductDto;
 import com.booknest.productservice.model.Product;
+import com.booknest.productservice.model.Category;
 import com.booknest.productservice.model.PublishInfo;
 import com.booknest.productservice.model.RatingInfo;
 import com.booknest.productservice.model.ReviewInfo;
@@ -17,7 +18,15 @@ public class ProductMapper {
         dto.setPublisher(p.getPublisher());
         dto.setLanguage(p.getLanguage());
         dto.setIsbn(p.getIsbn());
+        
+
         dto.setPagesNumber(p.getPagesNumber());
+
+        Category cat = p.getCategory();
+        if (cat != null) {
+            dto.setCategoryId(cat.getId());
+            dto.setCategoryName(cat.getName());
+        }
 
         PublishInfo pub = p.getPublishInfo();
         if (pub != null) {
@@ -44,12 +53,13 @@ public class ProductMapper {
         }
 
         dto.setDescription(p.getDescription());
+        dto.setImageUrl(p.getImageUrl());
         dto.setStockQuantity(p.getStockQuantity());
         dto.setPrice(p.getPrice());
         return dto;
     }
 
-    public static void updateEntity(Product p, ProductDto dto) {
+    public static void updateEntity(Product p, ProductDto dto, Category category) {
         p.setExternalId(dto.getExternalId());
         p.setName(dto.getName());
         p.setAuthors(dto.getAuthors());
@@ -57,6 +67,9 @@ public class ProductMapper {
         p.setLanguage(dto.getLanguage());
         p.setIsbn(dto.getIsbn());
         p.setPagesNumber(dto.getPagesNumber());
+        if (category != null) {
+            p.setCategory(category);
+        }
 
         PublishInfo pub = p.getPublishInfo() != null ? p.getPublishInfo() : new PublishInfo();
         pub.setPublishYear(dto.getPublishYear());
@@ -80,6 +93,7 @@ public class ProductMapper {
         p.setReviewInfo(rv);
 
         p.setDescription(dto.getDescription());
+        p.setImageUrl(dto.getImageUrl());
         p.setStockQuantity(dto.getStockQuantity());
         p.setPrice(dto.getPrice());
     }
