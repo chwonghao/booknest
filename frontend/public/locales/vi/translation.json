@@ -1,0 +1,149 @@
+{
+  "header": {
+    "searchPlaceholder": "Tìm cuốn sách tiếp theo của bạn...",
+    "suggestions": "Gợi ý",
+    "products": "Sản phẩm",
+    "welcome": "Chào mừng đến BookNest!",
+    "createAccount": "Tạo tài khoản mới",
+    "login": "Đăng nhập"
+  },
+  "profile": {
+    "myDetails": "Thông tin của tôi",
+    "myOrders": "Đơn hàng của tôi",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất",
+    "myAccountDetails": "Chi tiết tài khoản",
+    "emailAddress": "Địa chỉ Email",
+    "fullName": "Họ và Tên",
+    "phoneNumber": "Số điện thoại",
+    "address": "Địa chỉ",
+    "saveChanges": "Lưu thay đổi",
+    "saving": "Đang lưu...",
+    "updateSuccess": "Cập nhật thông tin thành công!",
+    "updateError": "Cập nhật thông tin thất bại.",
+    "role": "Vai trò",
+    "switchToUserView": "Chuyển sang chế độ người dùng",
+    "switchToAdminView": "Chuyển sang chế độ quản trị"
+  },
+  "auth": {
+    "loginFailed": "Email hoặc mật khẩu không đúng.",
+    "registerFailed": "Đăng ký không thành công. Email có thể đã tồn tại."
+  },
+  "orders": {
+    "noOrders": "Bạn chưa có đơn hàng nào."
+  },
+  "footer": {
+    "brand": "BookNest",
+    "tagline": "Nơi dừng chân cho mọi cuốn sách bạn yêu thích. Khám phá những thế giới mới, qua từng trang sách.",
+    "customerService": "Chăm sóc khách hàng",
+    "contactUs": "Liên hệ",
+    "returnPolicy": "Chính sách đổi trả",
+    "aboutUs": "Về chúng tôi",
+    "ourStory": "Câu chuyện",
+    "careers": "Tuyển dụng",
+    "followUs": "Theo dõi chúng tôi",
+    "copyright": "© {{year}} BookNest. Đã đăng ký bản quyền."
+  },
+  "cart": {
+    "title": "Giỏ hàng của tôi",
+    "itemCount": "{{count}} sản phẩm",
+    "empty": {
+      "title": "Giỏ hàng của bạn đang trống.",
+      "subtitle": "Có vẻ như bạn chưa thêm sản phẩm nào vào giỏ hàng."
+    },
+    "continueShopping": "Tiếp tục mua sắm",
+    "summary": {
+      "title": "Tóm tắt đơn hàng",
+      "subtotal": "Tạm tính ({{count}} sản phẩm)",
+      "shipping": "Phí vận chuyển",
+      "free": "MIỄN PHÍ",
+      "total": "Tổng cộng",
+      "loginPrompt": "Vui lòng đăng nhập để tiếp tục thanh toán."
+    },
+    "proceedToCheckout": "Tiến hành thanh toán"
+  },
+  "home": {
+    "featuredBooks": "Sách nổi bật",
+    "categories": "Danh mục",
+    "promotionBanner": "Quảng cáo"
+  },
+  "login": {
+    "title": "Đăng nhập",
+    "email": "Địa chỉ Email",
+    "password": "Mật khẩu",
+    "signIn": "Đăng nhập",
+    "noAccount": "Chưa có tài khoản? Đăng ký",
+    "validation": {
+      "emailRequired": "Vui lòng nhập email.",
+      "emailInvalid": "Địa chỉ email không hợp lệ.",
+      "passwordRequired": "Vui lòng nhập mật khẩu."
+    }
+  },
+  "register": {
+    "title": "Đăng ký",
+    "fullName": "Họ và Tên",
+    "email": "Địa chỉ Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "signUp": "Đăng ký",
+    "haveAccount": "Đã có tài khoản? Đăng nhập",
+    "passwordMismatch": "Mật khẩu không khớp.",
+    "success": "Đăng ký thành công! Đang chuyển đến trang đăng nhập...",
+    "validation": {
+      "fullNameRequired": "Vui lòng nhập họ và tên.",
+      "emailRequired": "Vui lòng nhập email.",
+      "emailInvalid": "Địa chỉ email không hợp lệ.",
+      "passwordRequired": "Vui lòng nhập mật khẩu.",
+      "passwordMinLength": "Mật khẩu phải có ít nhất 6 ký tự.",
+      "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu."
+    }
+  },
+  "product": {
+    "addToCart": "Thêm vào giỏ",
+    "addedToCart": "Đã thêm {{name}} vào giỏ hàng!"
+  },
+  "productPage": {
+    "fetchError": "Không thể tải chi tiết sản phẩm. Vui lòng thử lại sau.",
+    "notFound": "Không tìm thấy sản phẩm.",
+    "inStock": "Còn hàng",
+    "outOfStock": "Hết hàng",
+    "byAuthor": "bởi {{authors}}",
+    "reviews": "đánh giá",
+    "quantity": "Số lượng",
+    "addToCart": "Thêm vào giỏ hàng",
+    "publisher": "Nhà xuất bản",
+    "published": "Ngày xuất bản",
+    "pages": "Số trang",
+    "language": "Ngôn ngữ",
+    "isbn": "ISBN",
+    "ratingDistribution": "Phân phối đánh giá",
+    "ratings": "lượt xếp hạng",
+    "stars": "{{count}} sao"
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "shippingInfo": "Thông tin giao hàng",
+    "paymentMethod": "Phương thức thanh toán",
+    "cod": "Thanh toán khi nhận hàng (COD)",
+    "paypal": "PayPal (Sắp có)",
+    "placeOrder": "Đặt hàng",
+    "orderPlacedSuccess": "Đơn hàng của bạn đã được đặt thành công!",
+    "noItems": "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán."
+  },
+  "admin": {
+    "sidebar": {
+      "dashboard": "Bảng điều khiển",
+      "products": "Sản phẩm",
+      "orders": "Đơn hàng",
+      "users": "Người dùng"
+    },
+    "dashboard": "Bảng điều khiển Quản trị",
+    "welcome": "Chào mừng đến với bảng điều khiển quản trị. Chọn một mục từ thanh bên để bắt đầu.",
+    "accessDenied": "Bạn không có quyền truy cập trang này."
+  },
+  "notFound": {
+    "title": "Không tìm thấy trang",
+    "subtitle": "Xin lỗi, trang bạn đang tìm kiếm không tồn tại.",
+    "goHome": "Về trang chủ"
+  }
+}
