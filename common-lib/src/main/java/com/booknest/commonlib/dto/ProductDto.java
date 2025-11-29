@@ -10,6 +10,8 @@ public class ProductDto {
     private String publisher;
     private String language;
     private String isbn;
+    private Long categoryId;
+    private String categoryName;
     private Integer pagesNumber;
 
     private Integer publishYear;
@@ -28,6 +30,7 @@ public class ProductDto {
     private Integer countOfTextReviews;
 
     private String description;
+    private String imageUrl;
     private Long stockQuantity;
     private BigDecimal price;
 
@@ -45,6 +48,10 @@ public class ProductDto {
     public void setLanguage(String language) { this.language = language; }
     public String getIsbn() { return isbn; }
     public void setIsbn(String isbn) { this.isbn = isbn; }
+    public Long getCategoryId() { return categoryId; }
+    public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
+    public String getCategoryName() { return categoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
     public Integer getPagesNumber() { return pagesNumber; }
     public void setPagesNumber(Integer pagesNumber) { this.pagesNumber = pagesNumber; }
     public Integer getPublishYear() { return publishYear; }
@@ -73,6 +80,8 @@ public class ProductDto {
     public void setCountOfTextReviews(Integer countOfTextReviews) { this.countOfTextReviews = countOfTextReviews; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public Long getStockQuantity() { return stockQuantity; }
     public void setStockQuantity(Long stockQuantity) { this.stockQuantity = stockQuantity; }
     public BigDecimal getPrice() { return price; }
