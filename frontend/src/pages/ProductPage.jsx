@@ -4,6 +4,7 @@ import { Box, Typography, Grid, Button, Chip, CircularProgress, Alert, Paper, Di
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useTranslation } from 'react-i18next';
 import { fetchProduct } from '../api/productApi';
+import BreadcrumbsComponent from '../components/BreadcrumbsComponent';
 import { CartContext } from '../context/CartContext';
 import { toast } from 'react-toastify';
 
@@ -51,7 +52,7 @@ const ProductPage = () => {
   };
 
   const { id: productId } = useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { addItem } = useContext(CartContext);
 
   const [product, setProduct] = useState(null);
@@ -82,7 +83,16 @@ const ProductPage = () => {
       toast.success(t('product.addedToCart', { name: product.name }));
     }
   };
-
+  const formatPrice = (price) => {
+    const currentLang = i18n.language.split('-')[0];
+    if (currentLang === 'vi') {
+      // Tạm thời giả định tỉ giá 1 USD = 25,000 VND.
+      // Bạn nên thay thế bằng một giải pháp lấy tỉ giá thực tế.
+      const vndPrice = price * 25000;
+      return `${vndPrice.toLocaleString('vi-VN')} ₫`;
+    }
+    return `$${price?.toFixed(2)}`;
+  };
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value, 10);
     if (!isNaN(value) && value > 0 && value <= product.stockQuantity) {
@@ -116,7 +126,14 @@ const ProductPage = () => {
     : { label: t('productPage.outOfStock'), color: 'error' };
 
   return (
-    <Paper sx={{ p: { xs: 2, md: 4 }, mt: 4 }}>
+    <>
+      <BreadcrumbsComponent
+        links={product.category ? [
+          { to: `/products?category=${product.category.id}`, label: product.category.name },
+          { label: product.name },
+        ] : [{ label: product.name }]}
+      />
+      <Paper sx={{ p: { xs: 2, md: 4 }, mt: 0 }}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={4}>
           <Box
@@ -166,10 +183,15 @@ const ProductPage = () => {
           <Divider sx={{ my: 2 }} />
 
           <Typography variant="h4" color="primary.main" fontWeight="bold" gutterBottom>
-            ${product.price?.toFixed(2)}
+            {formatPrice(product.price)}
           </Typography>
 
-          <Chip label={stockStatus.label} color={stockStatus.color} sx={{ mb: 2 }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Chip label={stockStatus.label} color={stockStatus.color} />
+            {product.stockQuantity > 0 && (
+              <Typography variant="body2" color="text.secondary">{t('productPage.stockRemaining', { count: product.stockQuantity })}</Typography>
+            )}
+          </Box>
 
           {product.stockQuantity > 0 && (
             <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
@@ -209,7 +231,8 @@ const ProductPage = () => {
           </Box>
         </Grid>
       </Grid>
-    </Paper>
+      </Paper>
+    </>
   );
 };
 

@@ -60,7 +60,11 @@
       "total": "Tổng cộng",
       "loginPrompt": "Vui lòng đăng nhập để tiếp tục thanh toán."
     },
-    "proceedToCheckout": "Tiến hành thanh toán"
+    "proceedToCheckout": "Tiến hành thanh toán",
+    "unavailableItems": "Sản phẩm không có sẵn",
+    "outOfStock": "Sản phẩm này đã hết hàng và được loại khỏi tổng tiền.",
+    "stockIssue": "Chỉ còn {{stock}} sản phẩm trong kho. Vui lòng điều chỉnh lại số lượng.",
+    "removeItem": "Xóa sản phẩm khỏi giỏ hàng"
   },
   "home": {
     "featuredBooks": "Sách nổi bật",
@@ -100,7 +104,9 @@
   },
   "product": {
     "addToCart": "Thêm vào giỏ",
-    "addedToCart": "Đã thêm {{name}} vào giỏ hàng!"
+    "addedToCart": "Đã thêm {{name}} vào giỏ hàng!",
+    "outOfStock": "Hết hàng",
+    "unknownAuthor": "Tác giả không xác định"
   },
   "productPage": {
     "fetchError": "Không thể tải chi tiết sản phẩm. Vui lòng thử lại sau.",
@@ -118,7 +124,15 @@
     "isbn": "ISBN",
     "ratingDistribution": "Phân phối đánh giá",
     "ratings": "lượt xếp hạng",
-    "stars": "{{count}} sao"
+    "stars": "{{count}} sao",
+    "stockRemaining": "Còn lại {{count}} sản phẩm"
+  },
+  "productsListPage": {
+    "title": "Tất cả sản phẩm",
+    "fetchError": "Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.",
+    "searchResultsFor": "Kết quả tìm kiếm cho",
+    "noResults": "Không tìm thấy sản phẩm nào",
+    "noResultsSubtitle": "Chúng tôi không tìm thấy sản phẩm nào phù hợp với tiêu chí của bạn. Vui lòng thử bộ lọc hoặc từ khóa khác."
   },
   "checkout": {
     "title": "Thanh toán",
@@ -145,5 +159,12 @@
     "title": "Không tìm thấy trang",
     "subtitle": "Xin lỗi, trang bạn đang tìm kiếm không tồn tại.",
     "goHome": "Về trang chủ"
+  },
+  "breadcrumbs": {
+    "home": "Trang chủ",
+    "products": "Sản phẩm",
+    "cart": "Giỏ hàng",
+    "profile": "Hồ sơ",
+    "checkout": "Thanh toán"
   }
 }

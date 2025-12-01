@@ -9,6 +9,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { getMyOrdersApi } from '../api/orderApi';
 import { updateProfileApi } from '../api/authApi';
+import BreadcrumbsComponent from '../components/BreadcrumbsComponent';
 
 // --- Component cho mục "My Details" ---
 const MyDetails = ({ user, onUpdate }) => {
@@ -182,7 +183,8 @@ const ProfilePage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="lg" sx={{ mt: 0, mb: 4 }}>
+      <BreadcrumbsComponent links={[{ label: t('breadcrumbs.profile') }]} />
       <Grid container spacing={4}>
         <Grid item xs={12} md={4}>
             <Paper sx={{ p: 2 }}>

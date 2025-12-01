@@ -5,10 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import BreadcrumbsComponent from '../components/BreadcrumbsComponent';
 import { createOrderApi } from '../api/orderApi';
 
 const CheckoutPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { items, total, clearCart } = useContext(CartContext);
   const { user, isAuthenticated, loading: authLoading } = useContext(AuthContext);
@@ -20,11 +21,24 @@ const CheckoutPage = () => {
     email: user?.email || '',
   });
   const [paymentMethod, setPaymentMethod] = useState('cod'); // 'cod' or 'paypal'
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
+  const formatPrice = (price) => {
+    if (price === null || price === undefined) return '';
+    const currentLang = i18n.language.split('-')[0];
+    if (currentLang === 'vi') {
+      // Tạm thời giả định tỉ giá 1 USD = 25,000 VND.
+      const vndPrice = price * 25000;
+      return `${vndPrice.toLocaleString('vi-VN')} ₫`;
+    }
+    return `$${price.toFixed(2)}`;
+  };
 
   useEffect(() => {
     // Khi context auth hết loading và xác định người dùng chưa đăng nhập
     if (!authLoading && !isAuthenticated) {
-      toast.info(t('cart.loginPrompt'));
+      // toast.info(t('cart.loginPrompt'));
+      toast.info(t('cart.summary.loginPrompt'));
       // Chuyển hướng về trang đăng nhập và lưu lại trang checkout để quay lại
       navigate('/login', { state: { from: '/checkout' }, replace: true });
     }
@@ -36,13 +50,16 @@ const CheckoutPage = () => {
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
+    setIsPlacingOrder(true);
     try {
       const orderPayload = {
         userId: user.id,
+        userName: user.fullName,
         orderItems: items.map(item => ({
           productId: item.id,
           quantity: item.qty
         })),
+        totalAmount: total,
         status: "PENDING"
       };
 
@@ -55,6 +72,8 @@ const CheckoutPage = () => {
     } catch (error) {
       console.error("Failed to place order:", error);
       toast.error(error.response?.data?.message || "Failed to place order. Please try again.");
+    } finally {
+      setIsPlacingOrder(false);
     }
   };
 
@@ -75,6 +94,7 @@ const CheckoutPage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <BreadcrumbsComponent links={[{ label: t('breadcrumbs.checkout') }]} />
       <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
         {t('checkout.title')}
       </Typography>
@@ -113,14 +133,14 @@ const CheckoutPage = () => {
                 {items.map(item => (
                   <ListItem key={item.id} disableGutters>
                     <ListItemText primary={`${item.name} (x${item.qty})`} secondary={item.author} />
-                    <Typography variant="body2">${(item.price * item.qty).toFixed(2)}</Typography>
+                    <Typography variant="body2">{formatPrice(item.price * item.qty)}</Typography>
                   </ListItem>
                 ))}
               </List>
               <Divider />
               <Box sx={{ display: 'flex', justifyContent: 'space-between', my: 2 }}>
                 <Typography>{t('cart.summary.subtotal', { count: items.length })}</Typography>
-                <Typography fontWeight="bold">${total.toFixed(2)}</Typography>
+                <Typography fontWeight="bold">{formatPrice(total)}</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                 <Typography>{t('cart.summary.shipping')}</Typography>
@@ -129,10 +149,14 @@ const CheckoutPage = () => {
               <Divider />
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, mb: 3 }}>
                 <Typography variant="h5" fontWeight="bold">{t('cart.summary.total')}</Typography>
-                <Typography variant="h5" fontWeight="bold">${total.toFixed(2)}</Typography>
+                <Typography variant="h5" fontWeight="bold">{formatPrice(total)}</Typography>
               </Box>
-              <Button type="submit" fullWidth variant="contained" size="large">
-                {t('checkout.placeOrder')}
+              <Button type="submit" fullWidth variant="contained" size="large" disabled={isPlacingOrder}>
+                {isPlacingOrder ? (
+                  <CircularProgress size={26} color="inherit" />
+                ) : (
+                  t('checkout.placeOrder')
+                )}
               </Button>
             </Paper>
           </Grid>

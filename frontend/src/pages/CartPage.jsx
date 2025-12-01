@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Box, Container, Typography, Paper, Button, Divider, Grid } from '@mui/material';
+import React, { useContext, useState, useEffect } from 'react';
+import { Box, Container, Typography, Paper, Button, Divider, Grid, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,32 +7,105 @@ import { CartContext } from '../context/CartContext';
 import CartItem from '../components/CartItem';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import BreadcrumbsComponent from '../components/BreadcrumbsComponent';
+import { fetchProduct } from '../api/productApi';
 
 const CartPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { items, total, cartCount } = useContext(CartContext);
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isStockLoading, setIsStockLoading] = useState(true);
+  const [inStockItems, setInStockItems] = useState([]);
+  const [outOfStockItems, setOutOfStockItems] = useState([]);
+  const [isCheckoutDisabled, setIsCheckoutDisabled] = useState(false);
 
+  const formatPrice = (price) => {
+    if (price === null || price === undefined) return '';
+    const currentLang = i18n.language.split('-')[0];
+    if (currentLang === 'vi') {
+      // Tạm thời giả định tỉ giá 1 USD = 25,000 VND.
+      const vndPrice = price * 25000;
+      return `${vndPrice.toLocaleString('vi-VN')} ₫`;
+    }
+    return `$${price.toFixed(2)}`;
+  };
+
+  useEffect(() => {
+    const fetchItemDetails = async () => {
+      if (items.length === 0) {
+        setInStockItems([]);
+        setOutOfStockItems([]);
+        setIsStockLoading(false);
+        setIsCheckoutDisabled(true);
+        return;
+      }
+
+      setIsStockLoading(true);
+      try {
+        const itemPromises = items.map(item => fetchProduct(item.id));
+        const productsDetails = await Promise.all(itemPromises);
+
+        const newInStockItems = [];
+        const newOutOfStockItems = [];
+        let checkoutShouldBeDisabled = false;
+
+        items.forEach((cartItem, index) => {
+          const productDetail = productsDetails[index];
+          const detailedItem = { ...cartItem, ...productDetail };
+
+          if (productDetail.stockQuantity === 0) {
+            newOutOfStockItems.push(detailedItem);
+          } else {
+            newInStockItems.push(detailedItem);
+            if (cartItem.qty > productDetail.stockQuantity) {
+              checkoutShouldBeDisabled = true;
+            }
+          }
+        });
+
+        setInStockItems(newInStockItems);
+        setOutOfStockItems(newOutOfStockItems);
+        setIsCheckoutDisabled(checkoutShouldBeDisabled || newInStockItems.length === 0);
+      } catch (error) {
+        console.error("Failed to fetch product details for cart:", error);
+        toast.error("Could not verify item stock. Please try again.");
+        setIsCheckoutDisabled(true); // Disable checkout on error
+      } finally {
+        setIsStockLoading(false);
+      }
+    };
+
+    fetchItemDetails();
+  }, [items]);
+  
   const handleCheckout = () => {
+    setIsCheckingOut(true);
     if (isAuthenticated) {
       navigate('/checkout');
     } else {
       toast.info(t('cart.summary.loginPrompt'));
       navigate('/login', { state: { from: '/checkout' } });
     }
+    // Không cần setIsCheckingOut(false) vì trang sẽ được chuyển hướng
   };
 
   return (
     <Container maxWidth="lg">
-      <Grid container spacing={4} sx={{ mt: 2 }}>
+      <BreadcrumbsComponent links={[{ label: t('breadcrumbs.cart') }]} />
+      <Grid container spacing={4} sx={{ mt: -2 }}>
         <Grid item xs={12} md={8}>
           <Paper elevation={2} sx={{ p: { xs: 2, md: 3 } }}>
             <Typography variant="h5" component="h1" gutterBottom display="flex" alignItems="center" fontWeight="bold">
               <ShoppingCartIcon sx={{ mr: 2 }} /> {t('cart.title')} ({t('cart.itemCount', { count: cartCount })})
             </Typography>
             <Divider sx={{ my: 2 }} />
-            {items.length === 0 ? (
+            {isStockLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+                <CircularProgress />
+              </Box>
+            ) : items.length === 0 ? (
               <Box sx={{ textAlign: 'center', py: 8 }}>
                 <Typography variant="h6" gutterBottom>
                   {t('cart.empty.title')}
@@ -46,9 +119,19 @@ const CartPage = () => {
               </Box>
             ) : (
               <Box>
-                {items.map(item => (
-                  <CartItem key={item.id} item={item} />
+                {inStockItems.map(item => (
+                  <CartItem key={item.id} item={item} isStockIssue={item.qty > item.stockQuantity} />
                 ))}
+                {outOfStockItems.length > 0 && (
+                  <>
+                    <Divider sx={{ my: 4 }}>
+                      <Typography variant="h6" color="text.secondary">{t('cart.unavailableItems')}</Typography>
+                    </Divider>
+                    {outOfStockItems.map(item => (
+                      <CartItem key={item.id} item={item} isOutOfStock={true} />
+                    ))}
+                  </>
+                )}
               </Box>
             )}
           </Paper>
@@ -59,7 +142,7 @@ const CartPage = () => {
             <Divider sx={{ my: 2 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
               <Typography color="text.secondary">{t('cart.summary.subtotal', { count: cartCount })}</Typography>
-              <Typography fontWeight="bold">${total.toFixed(2)}</Typography>
+              <Typography fontWeight="bold">{formatPrice(total)}</Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
               <Typography color="text.secondary">{t('cart.summary.shipping')}</Typography>
@@ -68,7 +151,7 @@ const CartPage = () => {
             <Divider sx={{ my: 2 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
               <Typography variant="h5" fontWeight="bold">{t('cart.summary.total')}</Typography>
-              <Typography variant="h5" fontWeight="bold">${total.toFixed(2)}</Typography>
+              <Typography variant="h5" fontWeight="bold">{formatPrice(total)}</Typography>
             </Box>
             <Button 
               fullWidth 
@@ -76,9 +159,14 @@ const CartPage = () => {
               color="primary" 
               size="large"
               onClick={handleCheckout}
-              disabled={items.length === 0}
+              disabled={isCheckoutDisabled || isCheckingOut || isStockLoading}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
             >
-              {t('cart.proceedToCheckout')}
+              {isCheckingOut ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                t('cart.proceedToCheckout')
+              )}
             </Button>
           </Paper>
         </Grid>

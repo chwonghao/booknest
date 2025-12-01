@@ -61,7 +61,11 @@
       "total": "Total",
       "loginPrompt": "Please login to continue checkout."
     },
-    "proceedToCheckout": "Proceed to Checkout"
+    "proceedToCheckout": "Proceed to Checkout",
+    "unavailableItems": "Unavailable Items",
+    "outOfStock": "This item is out of stock and has been removed from your subtotal.",
+    "stockIssue": "Only {{stock}} left in stock. Please adjust the quantity.",
+    "removeItem": "Remove item from cart"
   },
   "home": {
     "featuredBooks": "Featured Books",
@@ -101,7 +105,9 @@
   },
   "product": {
     "addToCart": "Add to Cart",
-    "addedToCart": "{{name}} has been added to your cart!"
+    "addedToCart": "{{name}} has been added to your cart!",
+    "outOfStock": "Out of Stock",
+    "unknownAuthor": "Unknown Author"
   },
   "productPage": {
     "fetchError": "Failed to fetch product details. Please try again later.",
@@ -119,7 +125,15 @@
     "isbn": "ISBN",
     "ratingDistribution": "Rating Distribution",
     "ratings": "ratings",
-    "stars": "{{count}} star"
+    "stars": "{{count}} star",
+    "stockRemaining": "{{count}} in stock"
+  },
+  "productsListPage": {
+    "title": "All Products",
+    "fetchError": "Could not fetch products. Please try again later.",
+    "searchResultsFor": "Search results for",
+    "noResults": "No Products Found",
+    "noResultsSubtitle": "We couldn't find any products matching your criteria. Try a different filter or search term."
   },
   "checkout": {
     "title": "Checkout",
