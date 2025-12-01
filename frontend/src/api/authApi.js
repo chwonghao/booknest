@@ -12,6 +12,7 @@ export const loginApi = async (payload) => {
 
 export const registerApi = async (payload) => {
   const res = await axios.post("http://localhost:8081/api/users", payload);
+  console.log(res);
   return res.data;
 };
 

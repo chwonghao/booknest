@@ -34,8 +34,20 @@ export function CartProvider({ children }) {
       return [...prev, { ...p, qty }];
     });
   };
-  const removeItem = (id) => setItems(prev => prev.filter(x => x.id !== id));
+
+  // Giảm số lượng của một sản phẩm đi 1
+  const removeItem = (id) => {
+    setItems(prev => prev.map(item =>
+      item.id === id ? { ...item, qty: item.qty > 1 ? item.qty - 1 : 1 } : item
+    ));
+  };
+
+  // Xóa hoàn toàn một sản phẩm khỏi giỏ hàng
+  const deleteItem = (id) => setItems(prev => prev.filter(x => x.id !== id));
+
+  // Cập nhật số lượng của một sản phẩm thành một giá trị cụ thể
   const updateQty = (id, qty) => setItems(prev => prev.map(x => x.id === id ? { ...x, qty } : x));
+  
   const clearCart = () => {
     setItems([]);
   };
@@ -44,7 +56,7 @@ export function CartProvider({ children }) {
   const total = items.reduce((sum, x) => sum + x.price * x.qty, 0);
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQty, clearCart, cartCount, total }}>
+    <CartContext.Provider value={{ items, addItem, removeItem, deleteItem, updateQty, clearCart, cartCount, total }}>
       {children}
     </CartContext.Provider>
   );
