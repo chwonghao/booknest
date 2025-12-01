@@ -16,6 +16,8 @@ public class Order {
 
     @NotNull
     private Long userId;
+    @NotNull
+    private String userName;
 
     @ElementCollection
     @CollectionTable(name = "order_products", joinColumns = @JoinColumn(name = "order_id"))
@@ -34,6 +36,9 @@ public class Order {
 
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
+
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
 
     public List<OrderItem> getOrderItems() { return orderItems; }
     public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }

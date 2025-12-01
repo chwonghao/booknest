@@ -7,6 +7,7 @@ import java.util.List;
 public class OrderDto {
     private Long id;
     private Long userId;
+    private String userName;
     private List<Long> productIds;
     private BigDecimal totalAmount;
     private String status; // PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
@@ -23,6 +24,12 @@ public class OrderDto {
     }
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+    public String getUserName() {
+        return userName;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
     public List<Long> getProductIds() {
         return productIds;

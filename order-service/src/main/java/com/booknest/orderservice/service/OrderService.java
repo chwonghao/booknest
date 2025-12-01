@@ -51,6 +51,7 @@ public class OrderService {
         if (user == null) {
             throw new IllegalArgumentException("User not found: " + order.getUserId());
         }
+        order.setUserName(user.getFullName());
 
         // 2. Tính tổng tiền từ danh sách sản phẩm
         BigDecimal total = BigDecimal.ZERO;
@@ -92,6 +93,7 @@ public class OrderService {
     public Optional<Order> updateOrder(Long id, Order details) {
         return repository.findById(id).map(existing -> {
             existing.setUserId(details.getUserId());
+            existing.setUserName(details.getUserName());
             existing.setOrderItems(details.getOrderItems());
             existing.setTotalAmount(details.getTotalAmount());
             existing.setStatus(details.getStatus());

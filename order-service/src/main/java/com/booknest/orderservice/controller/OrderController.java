@@ -75,6 +75,7 @@ public class OrderController {
     private void applyPatch(Order order, String key, Object value) {
         switch (key) {
             case "userId" -> order.setUserId(castLong(value));
+            case "userName" -> order.setUserName(value.toString());
             case "orderItems" -> order.setOrderItems(castListOrderItem(value));
             case "totalAmount" -> order.setTotalAmount(castBigDecimal(value));
             case "status" -> order.setStatus(OrderStatus.valueOf(value.toString()));
