@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext, useRef } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Box, Container, InputBase, IconButton, Grid, Paper, List, ListItemText, Avatar, ListItemButton, Badge, Menu, Button, Stack, Divider, CircularProgress, Chip } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { styled, alpha } from '@mui/material/styles';
@@ -104,6 +104,7 @@ const Header = () => {
     const { t } = useTranslation();
     const { cartCount } = useContext(CartContext);
     const { user, isAdminView } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [results, setResults] = useState([]);
@@ -154,6 +155,14 @@ const Header = () => {
         setSearchQuery('');
     }
 
+    const handleSearchSubmit = (e) => {
+        if (e.key === 'Enter' && searchQuery.trim()) {
+            navigate(`/products?q=${encodeURIComponent(searchQuery.trim())}`);
+            setOverlayVisible(false);
+            setSearchQuery('');
+        }
+    }
+
     const handleUserMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -179,118 +188,123 @@ const Header = () => {
     };
 
     return (
-        <AppBar position="fixed" color={isAdminView ? "secondary" : "primary"} elevation={1} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-            <Container maxWidth={isAdminView ? false : 'lg'}>
-            <Toolbar disableGutters>
-                <Typography variant="h5" noWrap component={RouterLink} to={isAdminView ? "/admin/dashboard" : "/"} sx={{ mr: 3, display: { xs: 'none', md: 'flex' }, fontWeight: 700, letterSpacing: '.2rem', color: 'inherit', textDecoration: 'none' }}>
-                    BOOKNEST
-                </Typography>
-                {isAdminView && <Chip label="Admin" color="default" size="small" />}
+        <>
+            <AppBar position="fixed" color={isAdminView ? "secondary" : "primary"} elevation={1} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <Container maxWidth={isAdminView ? false : 'lg'}>
+                <Toolbar disableGutters>
+                    <Typography variant="h5" noWrap component={RouterLink} to={isAdminView ? "/admin/dashboard" : "/"} sx={{ mr: 3, display: { xs: 'none', md: 'flex' }, fontWeight: 700, letterSpacing: '.2rem', color: 'inherit', textDecoration: 'none' }}>
+                        BOOKNEST
+                    </Typography>
+                    {isAdminView && <Chip label="Admin" color="default" size="small" />}
 
-                {!isAdminView ? (
-                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', mx: 2, position: 'relative' }} ref={searchContainerRef}>
-                        <Search>
-                            <SearchIconWrapper><SearchIcon /></SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder={t('header.searchPlaceholder')}
-                                inputProps={{ 'aria-label': 'search' }}
-                                value={searchQuery}
-                                onFocus={() => setOverlayVisible(true)}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </Search>
-                        {isOverlayVisible && searchQuery && <SearchOverlay suggestions={suggestions} results={results} onResultClick={handleResultClick} />}
-                    </Box>
-                ) : (
-                    <Box sx={{ flexGrow: 1 }} />
-                )}
-                
-                <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
-                    <LanguageSwitcher />
-                    {!isAdminView && (
-                        <IconButton size="large" aria-label="show cart items" color="inherit" component={RouterLink} to="/cart">
-                            <Badge badgeContent={cartCount} color="error"><ShoppingCartOutlinedIcon /></Badge>
-                        </IconButton>
-                    )}
-                    <IconButton size="large" aria-label="show notifications" color="inherit" onClick={handleNotificationMenuOpen}>
-                        <Badge badgeContent={notifications.data.filter(n => !n.read).length} color="error">
-                            <NotificationsNoneOutlinedIcon />
-                        </Badge>
-                    </IconButton>
-                    <Menu
-                        anchorEl={notificationAnchorEl}
-                        open={Boolean(notificationAnchorEl)}
-                        onClose={handleNotificationMenuClose}
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        disableScrollLock={true}
-                        PaperProps={{ sx: { mt: 1.5, width: 360, maxHeight: 400 } }}
-                    >
-                        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="h6">Notifications</Typography>
-                            <Button size="small">Mark all as read</Button>
+                    {!isAdminView ? (
+                        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', mx: 2, position: 'relative' }} ref={searchContainerRef}>
+                            <Search>
+                                <SearchIconWrapper><SearchIcon /></SearchIconWrapper>
+                                <StyledInputBase
+                                    placeholder={t('header.searchPlaceholder')}
+                                    inputProps={{ 'aria-label': 'search' }}
+                                    value={searchQuery}
+                                    onFocus={() => setOverlayVisible(true)}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onKeyDown={handleSearchSubmit}
+                                />
+                            </Search>
+                            {isOverlayVisible && searchQuery && <SearchOverlay suggestions={suggestions} results={results} onResultClick={handleResultClick} />}
                         </Box>
-                        <Divider />
-                        {notifications.loading ? (
-                            <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}><CircularProgress size={24} /></Box>
-                        ) : notifications.data.length === 0 ? (
-                            <Typography sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>No new notifications</Typography>
-                        ) : (
-                            <List sx={{ p: 0 }}>
-                                {notifications.data.map(notif => (
-                                    <ListItemButton key={notif.id} sx={{ bgcolor: notif.read ? 'transparent' : 'action.hover' }}>
-                                        <ListItemText primary={notif.message} secondary={new Date(notif.createdAt).toLocaleString()} />
-                                    </ListItemButton>
-                                ))}
-                            </List>
-                        )}
-                    </Menu>
-
-                    {user ? (
-                        <IconButton size="large" edge="end" aria-label="account of current user" color="inherit" component={RouterLink} to="/profile">
-                            <AccountCircleOutlinedIcon />
-                        </IconButton>
                     ) : (
-                        <>
-                            <IconButton size="large" edge="end" aria-label="account of current user" color="inherit" onClick={handleUserMenuOpen}>
+                        <Box sx={{ flexGrow: 1 }} />
+                    )}
+                    
+                    <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
+                        <LanguageSwitcher />
+                        {!isAdminView && (
+                            <IconButton size="large" aria-label="show cart items" color="inherit" component={RouterLink} to="/cart">
+                                <Badge badgeContent={cartCount} color="error"><ShoppingCartOutlinedIcon /></Badge>
+                            </IconButton>
+                        )}
+                        <IconButton size="large" aria-label="show notifications" color="inherit" onClick={handleNotificationMenuOpen}>
+                            <Badge badgeContent={notifications.data.filter(n => !n.read).length} color="error">
+                                <NotificationsNoneOutlinedIcon />
+                            </Badge>
+                        </IconButton>
+                        <Menu
+                            anchorEl={notificationAnchorEl}
+                            open={Boolean(notificationAnchorEl)}
+                            onClose={handleNotificationMenuClose}
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                            disableScrollLock={true}
+                            PaperProps={{ sx: { mt: 1.5, width: 360, maxHeight: 400 } }}
+                        >
+                            <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Typography variant="h6">Notifications</Typography>
+                                <Button size="small">Mark all as read</Button>
+                            </Box>
+                            <Divider />
+                            {notifications.loading ? (
+                                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}><CircularProgress size={24} /></Box>
+                            ) : notifications.data.length === 0 ? (
+                                <Typography sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>No new notifications</Typography>
+                            ) : (
+                                <List sx={{ p: 0 }}>
+                                    {notifications.data.map(notif => (
+                                        <ListItemButton key={notif.id} sx={{ bgcolor: notif.read ? 'transparent' : 'action.hover' }}>
+                                            <ListItemText primary={notif.message} secondary={new Date(notif.createdAt).toLocaleString()} />
+                                        </ListItemButton>
+                                    ))}
+                                </List>
+                            )}
+                        </Menu>
+
+                        {user ? (
+                            <IconButton size="large" edge="end" aria-label="account of current user" color="inherit" component={RouterLink} to="/profile">
                                 <AccountCircleOutlinedIcon />
                             </IconButton>
-                            <Menu
-                                anchorEl={anchorEl}
-                                open={Boolean(anchorEl)}
-                                onClose={handleUserMenuClose}
-                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                                disableScrollLock={true}
-                                PaperProps={{
-                                    sx: {
-                                        mt: 1.5,
-                                        width: 250,
-                                    },
-                                }}
-                            >
-                                <Box sx={{ p: 2, textAlign: 'center' }}>
-                                    <Typography variant="subtitle1" gutterBottom>{t('header.welcome')}</Typography>
-                                    <Stack spacing={1.5} sx={{ mt: 2 }}>
-                                        <Button
-                                            component={RouterLink} to="/register"
-                                            variant="contained" color="primary" fullWidth
-                                            onClick={handleUserMenuClose}
-                                        >{t('header.createAccount')}</Button>
-                                        <Button
-                                            component={RouterLink} to="/login"
-                                            variant="outlined" color="primary" fullWidth
-                                            onClick={handleUserMenuClose}
-                                        >{t('header.login')}</Button>
-                                    </Stack>
-                                </Box>
-                            </Menu>
-                        </>
-                    )}
-                </Box>
-            </Toolbar>
-            </Container>
-        </AppBar>
+                        ) : (
+                            <>
+                                <IconButton size="large" edge="end" aria-label="account of current user" color="inherit" onClick={handleUserMenuOpen}>
+                                    <AccountCircleOutlinedIcon />
+                                </IconButton>
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    open={Boolean(anchorEl)}
+                                    onClose={handleUserMenuClose}
+                                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                                    disableScrollLock={true}
+                                    PaperProps={{
+                                        sx: {
+                                            mt: 1.5,
+                                            width: 250,
+                                        },
+                                    }}
+                                >
+                                    <Box sx={{ p: 2, textAlign: 'center' }}>
+                                        <Typography variant="subtitle1" gutterBottom>{t('header.welcome')}</Typography>
+                                        <Stack spacing={1.5} sx={{ mt: 2 }}>
+                                            <Button
+                                                component={RouterLink} to="/register"
+                                                variant="contained" color="primary" fullWidth
+                                                onClick={handleUserMenuClose}
+                                            >{t('header.createAccount')}</Button>
+                                            <Button
+                                                component={RouterLink} to="/login"
+                                                variant="outlined" color="primary" fullWidth
+                                                onClick={handleUserMenuClose}
+                                            >{t('header.login')}</Button>
+                                        </Stack>
+                                    </Box>
+                                </Menu>
+                            </>
+                        )}
+                    </Box>
+                </Toolbar>
+                </Container>
+            </AppBar>
+            {/* This Toolbar is a spacer to push down the content below the fixed AppBar */}
+            <Toolbar />
+        </>
     );
 };
 
