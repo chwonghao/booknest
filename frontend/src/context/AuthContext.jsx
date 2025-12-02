@@ -22,43 +22,43 @@ export function AuthProvider({ children }) {
   });
 
   useEffect(() => {
-    // Nếu user không phải admin, luôn tắt chế độ xem admin
-    if (user && user.role !== 'ADMIN') {
-      if (isAdminView) {
+    const checkAdminView = () => {
+      if (user && user.role !== 'ADMIN' && isAdminView) {
         setIsAdminView(false);
         localStorage.removeItem('adminView');
       }
-    }
+    };
+
+    const fetchUserProfile = async () => {
+      try {
+        const decodedToken = jwtDecode(token);
+        if (decodedToken.exp * 1000 < Date.now()) {
+          console.log("Token has expired.");
+          logout();
+          return;
+        }
+
+        const userEmail = decodedToken.sub;
+        const userData = await profileApi({ email: userEmail });
+
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+        checkAdminView();
+      } catch (error) {
+        console.error("Invalid token or failed to fetch user profile:", error);
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
 
     if (token && !user) {
-      const fetchUserProfile = async () => {
-        try {
-          const decodedToken = jwtDecode(token);
-          if (decodedToken.exp * 1000 < Date.now()) {
-            console.log("Token has expired.");
-            logout();
-            return;
-          }
-
-          const userEmail = decodedToken.sub;
-          const userData = await profileApi({ email: userEmail });
-
-          setUser(userData);
-          localStorage.setItem('user', JSON.stringify(userData));
-        } catch (error) {
-          console.error("Invalid token or failed to fetch user profile:", error);
-          logout();
-        } finally {
-          setLoading(false); // Chỉ kết thúc loading sau khi xử lý xong
-        }
-      };
-
       fetchUserProfile();
     } else {
-      setLoading(false); // Nếu không cần fetch thì kết thúc luôn
+      checkAdminView();
+      setLoading(false);
     }
-  }, [token, user]);
-
+  }, [token]); // chỉ phụ thuộc vào token
 
   const login = async (email, password) => {
     try {
