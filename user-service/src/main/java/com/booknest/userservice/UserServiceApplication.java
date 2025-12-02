@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "com.booknest.userservice.client")
+@EnableFeignClients(basePackages = "com.booknest.userservice.infrastructure.client")
 public class UserServiceApplication {
 
 	public static void main(String[] args) {
