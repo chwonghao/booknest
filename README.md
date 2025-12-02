@@ -3,6 +3,7 @@
 Chào mừng bạn đến với BookNest! Đây là một dự án ứng dụng web thương mại điện tử được xây dựng bằng React, chuyên cung cấp một nền tảng để mua bán sách trực tuyến.
 
 
+
 ![BookNest Homepage Screenshot](screenshot/dashboard.png)
 
 ## 📚 Giới thiệu
@@ -22,7 +23,7 @@ Dự án bao gồm một loạt các tính năng cần thiết cho một trang w
 *   **Thanh toán:** Quy trình thanh toán đơn giản với thông tin giao hàng và lựa chọn phương thức thanh toán (COD, PayPal).
 *   **Quản lý tài khoản:** Người dùng có thể xem và cập nhật thông tin cá nhân, địa chỉ, và xem lại lịch sử đơn hàng.
 *   **Xác thực:** Đăng ký, đăng nhập và đăng xuất.
-*   **Đa ngôn ngữ:** Hỗ trợ tiếng Việt và có thể mở rộng cho các ngôn ngữ khác.
+*   **Đa ngôn ngữ:** Hỗ trợ tiếng Việt và tiếng Anh.
 
 ### Giao diện quản trị (Admin)
 
@@ -43,8 +44,8 @@ Dự án này được xây dựng bằng các công nghệ web hiện đại đ
     *   **Quản lý trạng thái:** React Hooks (`useState`, `useEffect`, `useContext`).
     *   **Đa ngôn ngữ (i18n):** i18next - Để hỗ trợ nhiều ngôn ngữ.
 *   **Backend (Dự kiến):**
-    *   Node.js với Express.js hoặc một framework tương tự.
-    *   Cơ sở dữ liệu SQL (PostgreSQL, MySQL) hoặc NoSQL (MongoDB).
+    *   Java với Spring Boot.
+    *   Cơ sở dữ liệu MySQL.
     *   API RESTful để giao tiếp giữa frontend và backend.
 
 ## 🛠️ Cài đặt và Chạy dự án
