@@ -1,13 +1,13 @@
-import axios from "axios";
+import api from "./authApi"; // Sử dụng lại instance axios đã có interceptor
 
 export const getAllUserApi = async () => {
-    const token = localStorage.getItem("authToken");
-    const url = `http://localhost:8081/api/users`;
-    const res = await axios.get(url, {
-        headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return res.data;
+  // Interceptor sẽ tự động đính kèm token
+  const res = await api.get(`/users`);
+  return res.data;
+};
+
+export const updateUserApi = async (userId, payload) => {
+  // Interceptor sẽ tự động đính kèm token
+  const res = await api.patch(`/users/${userId}`, payload);
+  return res.data;
 };

@@ -39,8 +39,7 @@ export function AuthProvider({ children }) {
         }
 
         const userEmail = decodedToken.sub;
-        const userData = await profileApi({ email: userEmail });
-
+        const userData = await profileApi(userEmail);
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
         checkAdminView();
@@ -64,21 +63,38 @@ export function AuthProvider({ children }) {
     try {
       const data = await loginApi({ email, password });
       const newToken = data.accessToken;
+
+      // Tạm thời đặt token vào header để gọi API lấy thông tin người dùng
+      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       const decodedToken = jwtDecode(newToken);
       const userEmail = decodedToken.sub;
+      const userData = await profileApi(userEmail, newToken);
+      // *** Bắt đầu: Kiểm tra trạng thái người dùng ***
+      if (userData.status !== 'ACTIVE') {
+        // Xóa token tạm thời khỏi header
+        delete axios.defaults.headers.common['Authorization'];
+        let message = 'Tài khoản của bạn không hoạt động.';
+        if (userData.status === 'BANNED') {
+          message = 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.';
+        } else if (userData.status === 'INACTIVE') {
+          message = 'Tài khoản của bạn đã bị tạm ngưng hoặc chưa được kích hoạt.';
+        }
+        return { success: false, message };
+      }
+      // *** Kết thúc: Kiểm tra trạng thái người dùng ***
 
+      // Nếu trạng thái là ACTIVE, tiếp tục quá trình đăng nhập
       localStorage.setItem('authToken', newToken);
       setToken(newToken);
-      const userData = await profileApi({ email: userEmail });
       localStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
 
-      // Nếu người dùng là admin, bật chế độ xem admin theo mặc định
+      // Nếu người dùng là admin, mặc định chuyển sang chế độ xem của người dùng thường
       if (userData.role === 'ADMIN') {
-        setIsAdminView(false);
-        localStorage.setItem('adminView', 'false');
+        setIsAdminView(true);
+        localStorage.setItem('adminView', 'true');
       }
-      return { success: true };
+      return { success: true, user: userData };
     } catch (error) {
       console.error('Login failed:', error);
       const message = error.response?.data?.message || i18n.t('auth.loginFailed');

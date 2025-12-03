@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
+import LoginIcon from '@mui/icons-material/Login';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import { getAllOrdersApi } from '../../api/orderApi';
@@ -102,7 +103,12 @@ const DashboardPage = () => {
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 5);
 
-setData({ summaryData: mockSummaryData, salesData: mockSalesData, recentOrders: recentOrders, lowStockProducts: lowStockProducts, orderStatusData: orderStatusData });
+        const recentLogins = allUsers
+          .filter(user => user.lastLogin) // Chỉ lấy user đã từng đăng nhập
+          .sort((a, b) => new Date(b.lastLogin) - new Date(a.lastLogin)) // Sắp xếp mới nhất trước
+          .slice(0, 5); // Lấy 5 user gần nhất
+
+        setData({ summaryData: mockSummaryData, salesData: mockSalesData, recentOrders: recentOrders, lowStockProducts: lowStockProducts, orderStatusData: orderStatusData, recentLogins: recentLogins });
         setError(null);
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
@@ -217,7 +223,7 @@ setData({ summaryData: mockSummaryData, salesData: mockSalesData, recentOrders: 
         </Grid>
 
         {/* Low Stock Products */}
-        <Grid item xs={12} md={7}>
+        <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <WarningAmberIcon color="warning" sx={{ mr: 1 }} />
@@ -243,8 +249,34 @@ setData({ summaryData: mockSummaryData, salesData: mockSalesData, recentOrders: 
           </Paper>
         </Grid>
 
+        {/* Recent Logins */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <LoginIcon color="info" sx={{ mr: 1 }} />
+              <Typography variant="h6" gutterBottom component="div" sx={{ mb: 0 }}>
+                Đăng nhập gần đây
+              </Typography>
+            </Box>
+            {loading ? <CircularProgress /> : (
+              <List dense sx={{ maxHeight: 300, overflow: 'auto' }}>
+                {data?.recentLogins && data.recentLogins.length > 0 ? (
+                  data.recentLogins.map(user => (
+                    <ListItem key={user.id} divider>
+                      <Avatar sx={{ mr: 2 }} src={user.avatarUrl} />
+                      <ListItemText
+                        primary={user.fullName}
+                        secondary={`Đăng nhập lúc: ${new Date(user.lastLogin).toLocaleString()}`}
+                      />
+                    </ListItem>
+                  ))
+                ) : <Typography sx={{ p: 2, color: 'text.secondary' }}>Không có hoạt động đăng nhập nào gần đây.</Typography>}
+              </List>
+            )}
+          </Paper>
+        </Grid>
         {/* Recent Orders */}
-        <Grid item xs={12} md={5}>
+        <Grid item xs={12}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>Đơn hàng gần đây</Typography>
             {loading ? <CircularProgress /> : (

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:8081/api",
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:8080/api",
 });
 
 api.interceptors.request.use(config => {
@@ -20,7 +20,7 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("refreshToken");
         const res = await axios.post(
-          "http://localhost:8081/api/auth/refresh",
+          "http://localhost:8080/api/auth/refresh",
           { refreshToken }
         );
 
@@ -53,8 +53,12 @@ export const registerApi = async payload => {
   return res.data;
 };
 
-export const profileApi = async params => {
-  const res = await api.get(`/users/search?email=${params.email}`);
+export const profileApi = async (userEmail, token) => {
+  const res = await axios.get(`http://localhost:8080/api/users/search?email=${userEmail}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };
 
